@@ -346,16 +346,16 @@ _PyOS_URandom(void *buffer, Py_ssize_t size)
     }
     if (size == 0)
         return 0;
-
+    sceClibPrintf("Let's see if we get here\n");
 #ifdef MS_WINDOWS
     return win32_urandom((unsigned char *)buffer, size, 1);
+#elif defined(__vita__)
+    return sceKernelGetRandomNumber(buffer, size);
 #elif defined(PY_GETENTROPY)
     return py_getentropy(buffer, size, 0);
 #else
 # ifdef __VMS
     return vms_urandom((unsigned char *)buffer, size, 1);
-# elif defined(__vita__)
-    return sceKernelGetRandomNumber(buffer, size);
 # else
     return dev_urandom_python((char*)buffer, size);
 # endif
