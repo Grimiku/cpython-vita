@@ -346,7 +346,7 @@ _PyOS_URandom(void *buffer, Py_ssize_t size)
     }
     if (size == 0)
         return 0;
-    sceClibPrintf("Let's see if we get here\n");
+
 #ifdef MS_WINDOWS
     return win32_urandom((unsigned char *)buffer, size, 1);
 #elif defined(__vita__)
