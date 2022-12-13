@@ -339,7 +339,7 @@ _io_open_impl(PyObject *module, PyObject *file, const char *mode,
     path_or_fd = NULL;
 
     modeobj = PyUnicode_FromString(mode);
-    if (modeobj == NULL)
+    if (modeobj == NULL) 
         goto error;
 
     /* buffering */

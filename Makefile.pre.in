@@ -584,7 +584,7 @@ LIBEXPAT_HEADERS= \
 
 # Default target
 all:		@DEF_MAKE_ALL_RULE@
-build_all:	check-clean-src $(BUILDPYTHON) platform oldsharedmods sharedmods \
+build_all:	check-clean-src $(BUILDPYTHON) platform \
 		gdbhooks Programs/_testembed python-config
 build_wasm: check-clean-src $(BUILDPYTHON) platform oldsharedmods python-config
 
@@ -969,7 +969,8 @@ Programs/_testembed: Programs/_testembed.o $(LINK_PYTHON_DEPS)
 
 BOOTSTRAP_HEADERS = \
 	Python/frozen_modules/importlib._bootstrap.h \
-	Python/frozen_modules/importlib._bootstrap_external.h
+	Python/frozen_modules/importlib._bootstrap_external.h  \
+	Python/frozen_modules/zipimport.h
 
 Programs/_bootstrap_python.o: Programs/_bootstrap_python.c $(BOOTSTRAP_HEADERS) $(PYTHON_HEADERS)
 
@@ -1018,6 +1019,7 @@ FROZEN_FILES_IN = \
 		Lib/genericpath.py \
 		Lib/ntpath.py \
 		Lib/posixpath.py \
+		Lib/vitapath.py \
 		Lib/os.py \
 		Lib/site.py \
 		Lib/stat.py \
@@ -1043,6 +1045,7 @@ FROZEN_FILES_OUT = \
 		Python/frozen_modules/genericpath.h \
 		Python/frozen_modules/ntpath.h \
 		Python/frozen_modules/posixpath.h \
+		Python/frozen_modules/vitapath.h \
 		Python/frozen_modules/os.h \
 		Python/frozen_modules/site.h \
 		Python/frozen_modules/stat.h \
@@ -1102,6 +1105,9 @@ Python/frozen_modules/ntpath.h: Lib/ntpath.py $(FREEZE_MODULE_DEPS)
 
 Python/frozen_modules/posixpath.h: Lib/posixpath.py $(FREEZE_MODULE_DEPS)
 	$(FREEZE_MODULE) posixpath $(srcdir)/Lib/posixpath.py Python/frozen_modules/posixpath.h
+
+Python/frozen_modules/vitapath.h: Lib/vitapath.py $(FREEZE_MODULE_DEPS)
+	$(FREEZE_MODULE) vitapath $(srcdir)/Lib/vitapath.py Python/frozen_modules/vitapath.h
 
 Python/frozen_modules/os.h: Lib/os.py $(FREEZE_MODULE_DEPS)
 	$(FREEZE_MODULE) os $(srcdir)/Lib/os.py Python/frozen_modules/os.h
@@ -1170,6 +1176,7 @@ Python/deepfreeze/deepfreeze.c: $(DEEPFREEZE_DEPS)
 	Python/frozen_modules/genericpath.h:genericpath \
 	Python/frozen_modules/ntpath.h:ntpath \
 	Python/frozen_modules/posixpath.h:posixpath \
+	Python/frozen_modules/vitapath.h:vitapath \
 	Python/frozen_modules/os.h:os \
 	Python/frozen_modules/site.h:site \
 	Python/frozen_modules/stat.h:stat \
@@ -1764,7 +1771,7 @@ altinstall: commoninstall
 
 commoninstall:  check-clean-src @FRAMEWORKALTINSTALLFIRST@ \
 		altbininstall libinstall inclinstall libainstall \
-		sharedinstall oldsharedinstall altmaninstall \
+		altmaninstall \
 		@FRAMEWORKALTINSTALLLAST@
 
 # Install shared libraries enabled by Setup

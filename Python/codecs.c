@@ -133,6 +133,7 @@ PyObject *_PyCodec_Lookup(const char *encoding)
 
     PyInterpreterState *interp = _PyInterpreterState_GET();
     if (interp->codec_search_path == NULL && _PyCodecRegistry_Init()) {
+        sceClibPrintf("codec search path not set\n");
         return NULL;
     }
 
@@ -141,6 +142,7 @@ PyObject *_PyCodec_Lookup(const char *encoding)
        replaced with underscores. */
     PyObject *v = normalizestring(encoding);
     if (v == NULL) {
+        sceClibPrintf("No string\n");
         return NULL;
     }
     PyUnicode_InternInPlace(&v);
@@ -153,6 +155,7 @@ PyObject *_PyCodec_Lookup(const char *encoding)
         return result;
     }
     else if (PyErr_Occurred()) {
+        sceClibPrintf("Error getting codec\n");
         goto onError;
     }
 
@@ -1500,34 +1503,40 @@ static int _PyCodecRegistry_Init(void)
 
     interp->codec_search_path = PyList_New(0);
     if (interp->codec_search_path == NULL) {
+        sceClibPrintf("codec_search_path is null\n");
         return -1;
     }
 
     interp->codec_search_cache = PyDict_New();
     if (interp->codec_search_cache == NULL) {
+        sceClibPrintf("codec_search_cache is null\n");
         return -1;
     }
 
     interp->codec_error_registry = PyDict_New();
     if (interp->codec_error_registry == NULL) {
+        sceClibPrintf("codec_error_registry is null\n");
         return -1;
     }
 
     for (size_t i = 0; i < Py_ARRAY_LENGTH(methods); ++i) {
         PyObject *func = PyCFunction_NewEx(&methods[i].def, NULL, NULL);
         if (!func) {
+            sceClibPrintf("func is null\n");
             return -1;
         }
 
         int res = PyCodec_RegisterError(methods[i].name, func);
         Py_DECREF(func);
         if (res) {
+            sceClibPrintf("RegisterError\n");
             return -1;
         }
     }
 
     mod = PyImport_ImportModule("encodings");
     if (mod == NULL) {
+        sceClibPrintf("Can't find the fucking encodings module\n");
         return -1;
     }
     Py_DECREF(mod);

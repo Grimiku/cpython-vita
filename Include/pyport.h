@@ -129,6 +129,7 @@ typedef intptr_t        Py_intptr_t;
 
 #elif HAVE_SSIZE_T
 typedef ssize_t         Py_ssize_t;
+#define SSIZE_MAX 2147483647
 #   define PY_SSIZE_T_MAX SSIZE_MAX
 #elif SIZEOF_VOID_P == SIZEOF_SIZE_T
 typedef Py_intptr_t     Py_ssize_t;
@@ -678,7 +679,7 @@ extern char * _getpty(int *, int, mode_t, int);
 #  error "Py_TRACE_REFS ABI is not compatible with release and debug ABI"
 #endif
 
-#if defined(__ANDROID__) || defined(__VXWORKS__)
+#if defined(__ANDROID__) || defined(__VXWORKS__) || defined(__vita__)
    // Use UTF-8 as the locale encoding, ignore the LC_CTYPE locale.
    // See _Py_GetLocaleEncoding(), PyUnicode_DecodeLocale()
    // and PyUnicode_EncodeLocale().

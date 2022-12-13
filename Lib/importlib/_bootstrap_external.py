@@ -31,11 +31,12 @@ import marshal
 
 
 _MS_WINDOWS = (sys.platform == 'win32')
+_VITA = (sys.platform == 'vita')
 if _MS_WINDOWS:
     import nt as _os
     import winreg
 else:
-    import posix as _os
+    import vita as _os
 
 
 if _MS_WINDOWS:
@@ -175,7 +176,15 @@ if _MS_WINDOWS:
             return False
         root = _os._path_splitroot(path)[0].replace('/', '\\')
         return len(root) > 1 and (root.startswith('\\\\') or root.endswith('\\'))
-
+elif _VITA:
+    def _path_isabs(path):
+        """Replacement for os.path.isabs."""
+        for c in path:
+            if c == '/':
+                return False
+            elif c == ':':
+                return True
+        return False
 else:
     def _path_isabs(path):
         """Replacement for os.path.isabs."""

@@ -15892,6 +15892,7 @@ config_get_codec_name(wchar_t **config_encoding)
 {
     char *encoding;
     if (encode_wstr_utf8(*config_encoding, &encoding, "stdio_encoding") < 0) {
+        sceClibPrintf("failed\n");
         return -1;
     }
 
@@ -15928,6 +15929,7 @@ config_get_codec_name(wchar_t **config_encoding)
     return 0;
 
 error:
+    sceClibPrintf("Some sort of error\n");
     Py_XDECREF(codec);
     Py_XDECREF(name_obj);
     return -1;

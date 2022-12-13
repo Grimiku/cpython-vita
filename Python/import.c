@@ -1787,6 +1787,7 @@ PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
 
     if (name == NULL) {
         _PyErr_SetString(tstate, PyExc_ValueError, "Empty module name");
+        sceClibPrintf("Empty module name\n");
         goto error;
     }
 
@@ -1799,6 +1800,7 @@ PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
         goto error;
     }
     if (PyUnicode_READY(name) < 0) {
+        sceClibPrintf("Not Unicode Ready\n");
         goto error;
     }
     if (level < 0) {
@@ -1822,11 +1824,13 @@ PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
 
     mod = import_get_module(tstate, abs_name);
     if (mod == NULL && _PyErr_Occurred(tstate)) {
+        sceClibPrintf("Man, come on\n");
         goto error;
     }
 
     if (mod != NULL && mod != Py_None) {
         if (import_ensure_initialized(tstate->interp, mod, abs_name) < 0) {
+            sceClibPrintf("Not Initialized?\n");
             goto error;
         }
     }
@@ -1834,6 +1838,7 @@ PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
         Py_XDECREF(mod);
         mod = import_find_and_load(tstate, abs_name);
         if (mod == NULL) {
+            sceClibPrintf("Failed Import Find and Load\n");
             goto error;
         }
     }
@@ -1919,6 +1924,7 @@ PyImport_ImportModuleLevelObject(PyObject *name, PyObject *globals,
     Py_XDECREF(package);
     if (final_mod == NULL) {
         remove_importlib_frames(tstate);
+        sceClibPrintf("Yeah, we fucked up\n");
     }
     return final_mod;
 }
@@ -1983,6 +1989,7 @@ PyImport_Import(PyObject *module_name)
 
     PyObject *from_list = PyList_New(0);
     if (from_list == NULL) {
+        sceClibPrintf("Lord help me\n");
         goto err;
     }
 
@@ -1991,19 +1998,24 @@ PyImport_Import(PyObject *module_name)
     if (globals != NULL) {
         Py_INCREF(globals);
         builtins = PyObject_GetItem(globals, &_Py_ID(__builtins__));
-        if (builtins == NULL)
+        if (builtins == NULL) {
+            sceClibPrintf("This won't end\n");
             goto err;
+        }
     }
     else {
         /* No globals -- use standard builtins, and fake globals */
         builtins = PyImport_ImportModuleLevel("builtins",
                                               NULL, NULL, NULL, 0);
         if (builtins == NULL) {
+            sceClibPrintf("According to\n");
             goto err;
         }
         globals = Py_BuildValue("{OO}", &_Py_ID(__builtins__), builtins);
-        if (globals == NULL)
+        if (globals == NULL) {
+            sceClibPrintf("all known laws\n");
             goto err;
+        }
     }
 
     /* Get the __import__ function from the builtins */
@@ -2015,16 +2027,20 @@ PyImport_Import(PyObject *module_name)
     }
     else
         import = PyObject_GetAttr(builtins, &_Py_ID(__import__));
-    if (import == NULL)
+    if (import == NULL) {
+        sceClibPrintf("of aviation\n");
         goto err;
+    }
 
     /* Call the __import__ function with the proper argument list
        Always use absolute import here.
        Calling for side-effect of import. */
     r = PyObject_CallFunction(import, "OOOOi", module_name, globals,
                               globals, from_list, 0, NULL);
-    if (r == NULL)
+    if (r == NULL) {
+        sceClibPrintf("you're a bitch\n");
         goto err;
+    }
     Py_DECREF(r);
 
     r = import_get_module(tstate, module_name);
@@ -2037,6 +2053,8 @@ PyImport_Import(PyObject *module_name)
     Py_XDECREF(builtins);
     Py_XDECREF(import);
     Py_XDECREF(from_list);
+
+    sceClibPrintf("Value is %d\n", r);
 
     return r;
 }

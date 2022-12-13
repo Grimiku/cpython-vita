@@ -252,7 +252,7 @@ _io_FileIO___init___impl(fileio *self, PyObject *nameobj, const char *mode,
         else
             self->fd = -1;
     }
-
+    sceClibPrintf("Did we get past this?\n");
     fd = _PyLong_AsInt(nameobj);
     if (fd < 0) {
         if (!PyErr_Occurred()) {
@@ -427,7 +427,7 @@ _Py_COMP_DIAG_POP
             goto error;
         }
 
-#ifndef MS_WINDOWS
+#if !defined(MS_WINDOWS) && !defined(__vita__)
         if (_Py_set_inheritable(self->fd, 0, atomic_flag_works) < 0)
             goto error;
 #endif

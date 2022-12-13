@@ -8,6 +8,7 @@ _PyParser_ASTFromString(const char *str, PyObject* filename, int mode,
                         PyCompilerFlags *flags, PyArena *arena)
 {
     if (PySys_Audit("compile", "yO", str, filename) < 0) {
+        sceClibPrintf("Compile pls\n");
         return NULL;
     }
 

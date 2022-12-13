@@ -545,6 +545,9 @@ then
 	*-*-cygwin*)
 		ac_sys_system=Cygwin
 		;;
+  arm-vita-eabi)
+		ac_sys_system=Vita
+		;;
 	*-*-vxworks*)
 	    ac_sys_system=VxWorks
 	    ;;
@@ -602,6 +605,9 @@ if test "$cross_compiling" = yes; then
 		;;
 	*-*-vxworks*)
 		_host_cpu=$host_cpu
+		;;
+  arm-vita-eabi)
+		_host_cpu=arm
 		;;
 	wasm32-*-* | wasm64-*-*)
 		_host_cpu=$host_cpu

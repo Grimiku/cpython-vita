@@ -58,6 +58,8 @@ extern PyObject *_Py_get_genericpath_toplevel(void);
 extern PyObject *_Py_get_ntpath_toplevel(void);
 extern PyObject *_Py_get_posixpath_toplevel(void);
 extern PyObject *_Py_get_posixpath_toplevel(void);
+extern PyObject *_Py_get_vitapath_toplevel(void);
+extern PyObject *_Py_get_vitapath_toplevel(void);
 extern PyObject *_Py_get_os_toplevel(void);
 extern PyObject *_Py_get_site_toplevel(void);
 extern PyObject *_Py_get_stat_toplevel(void);
@@ -95,7 +97,8 @@ static const struct _frozen stdlib_modules[] = {
     {"genericpath", NULL, 0, false, GET_CODE(genericpath)},
     {"ntpath", NULL, 0, false, GET_CODE(ntpath)},
     {"posixpath", NULL, 0, false, GET_CODE(posixpath)},
-    {"os.path", NULL, 0, false, GET_CODE(posixpath)},
+    {"vitapath", NULL, 0, false, GET_CODE(vitapath)},
+    {"os.path", NULL, 0, false, GET_CODE(vitapath)},
     {"os", NULL, 0, false, GET_CODE(os)},
     {"site", NULL, 0, false, GET_CODE(site)},
     {"stat", NULL, 0, false, GET_CODE(stat)},
@@ -127,7 +130,7 @@ const struct _frozen *_PyImport_FrozenTest = test_modules;
 static const struct _module_alias aliases[] = {
     {"_frozen_importlib", "importlib._bootstrap"},
     {"_frozen_importlib_external", "importlib._bootstrap_external"},
-    {"os.path", "posixpath"},
+    {"os.path", "vitapath"},
     {"__hello_alias__", "__hello__"},
     {"__phello_alias__", "__hello__"},
     {"__phello_alias__.spam", "__hello__"},

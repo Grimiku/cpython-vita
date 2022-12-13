@@ -225,6 +225,10 @@ _multiprocessing_SemLock_release_impl(SemLockObject *self)
 #  define SEM_FAILED ((sem_t *)-1)
 #endif
 
+#ifdef __vita__
+#define SEM_FAILED      ((sem_t *) 0)
+#endif
+
 #ifndef HAVE_SEM_UNLINK
 #  define sem_unlink(name) 0
 #endif
@@ -554,7 +558,11 @@ _multiprocessing_SemLock__rebuild_impl(PyTypeObject *type, SEM_HANDLE handle,
 
 #ifndef MS_WINDOWS
     if (name != NULL) {
+#ifdef __vita__
+        handle = sem_open(name, 0, 0, 0);
+#else
         handle = sem_open(name, 0);
+#endif
         if (handle == SEM_FAILED) {
             PyMem_Free(name_copy);
             return PyErr_SetFromErrno(PyExc_OSError);
