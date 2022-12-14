@@ -1779,6 +1779,16 @@ init_timezone(PyObject *m)
         Py_DECREF(otz0);
         return -1;
     }
+#else
+    otz0 = PyUnicode_DecodeLocale("CST", "surrogateescape");
+    if (otz0 == NULL) {
+        return -1;
+    }
+    otz1 = PyUnicode_DecodeLocale("CDT", "surrogateescape");
+    if (otz1 == NULL) {
+        Py_DECREF(otz0);
+        return -1;
+    }
 #endif
 #endif // MS_WINDOWS
     PyObject *tzname_obj = Py_BuildValue("(NN)", otz0, otz1);
