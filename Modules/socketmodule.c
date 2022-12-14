@@ -694,6 +694,10 @@ internal_setblocking(PySocketSockObject *s, int block)
     block = !block;
     if (ioctl(s->sock_fd, FIONBIO, (unsigned int *)&block) == -1)
         goto done;
+#elif defined(__vita__)
+	block = !block;
+	if (setsockopt(s->sock_fd, SOL_SOCKET, SO_NONBLOCK, &block, sizeof(int)) == -1)
+        goto done;
 #else
     delay_flag = fcntl(s->sock_fd, F_GETFL, 0);
     if (delay_flag == -1)
