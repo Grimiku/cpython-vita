@@ -155,7 +155,7 @@ binascii binascii.c
 cmath cmathmodule.c
 math mathmodule.c
 #mmap mmapmodule.c
-#select selectmodule.c
+select selectmodule.c
 
 # XML
 _elementtree _elementtree.c

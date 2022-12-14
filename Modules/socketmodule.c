@@ -5385,11 +5385,12 @@ sock_initobj_impl(PySocketSockObject *self, int family, int type, int proto,
             set_error();
             return -1;
         }
-
+#ifndef __vita__
         if (_Py_set_inheritable(fd, 0, atomic_flag_works) < 0) {
             SOCKETCLOSE(fd);
             return -1;
         }
+#endif
 #endif
     }
     if (init_sockobject(self, fd, family, type, proto) == -1) {
