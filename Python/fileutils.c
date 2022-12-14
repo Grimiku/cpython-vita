@@ -1529,6 +1529,7 @@ _Py_open_impl(const char *pathname, int flags, int gil_held)
         do {
             Py_BEGIN_ALLOW_THREADS
             fd = open(pathname, flags);
+            sceClibPrintf("Opened file %s with fd: %d\n", pathname, fd);
             Py_END_ALLOW_THREADS
         } while (fd < 0
                  && errno == EINTR && !(async_err = PyErr_CheckSignals()));
@@ -1545,11 +1546,12 @@ _Py_open_impl(const char *pathname, int flags, int gil_held)
     }
     else {
         fd = open(pathname, flags);
+        sceClibPrintf("Opened not GIL file %s with fd: %d\n", pathname, fd);
         if (fd < 0)
             return -1;
     }
 
-#ifndef MS_WINDOWS
+#if !defined(MS_WINDOWS) && !defined(__vita__)
     if (set_inheritable(fd, 0, gil_held, atomic_flag_works) < 0) {
         close(fd);
         return -1;
@@ -1721,11 +1723,12 @@ _Py_fopen_obj(PyObject *path, const char *mode)
         PyErr_SetFromErrnoWithFilenameObject(PyExc_OSError, path);
         return NULL;
     }
-
+#ifdef __vita__
     if (set_inheritable(fileno(f), 0, 1, NULL) < 0) {
         fclose(f);
         return NULL;
     }
+#endif
     return f;
 }
 
@@ -1790,6 +1793,8 @@ _Py_read(int fd, void *buf, size_t count)
         return -1;
     }
 
+    sceClibPrintf("Read %d bytes from fd: %d\n", n, fd);
+
     return n;
 }
 
@@ -1832,6 +1837,7 @@ _Py_write_impl(int fd, const void *buf, size_t count, int gil_held)
             n = write(fd, buf, (int)count);
 #else
             n = write(fd, buf, count);
+            sceClibPrintf("Wrote %d bytes to fd: %d\n", n, fd);
 #endif
             /* save/restore errno because PyErr_CheckSignals()
              * and PyErr_SetFromErrno() can modify it */
@@ -1847,6 +1853,7 @@ _Py_write_impl(int fd, const void *buf, size_t count, int gil_held)
             n = write(fd, buf, (int)count);
 #else
             n = write(fd, buf, count);
+            sceClibPrintf("Wrote no Gil %d bytes to fd: %d\n", n, fd);
 #endif
             err = errno;
         } while (n < 0 && err == EINTR);

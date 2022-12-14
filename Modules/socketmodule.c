@@ -205,6 +205,10 @@ shutdown(how) -- shut down traffic in one or both directions\n\
 #  include <sys/ioctl.h>
 #endif
 
+#ifdef __vita__
+#  define SOMAXCONN 5
+#endif
+
 
 #if defined(__sgi) && _COMPILER_VERSION>700 && !_SGIAPI
 /* make sure that the reentrant (gethostbyaddr_r etc)
@@ -5619,7 +5623,9 @@ gethost_common(struct hostent *h, struct sockaddr *addr, size_t alen, int af)
 
     if (h == NULL) {
         /* Let's get real error message to return */
+#ifndef __vita__
         set_herror(h_errno);
+#endif
         return NULL;
     }
 
@@ -7706,7 +7712,7 @@ PyInit__socket(void)
 #endif
 
     /* Maximum number of connections for "listen" */
-#ifdef  SOMAXCONN
+#if defined(SOMAXCONN)
     PyModule_AddIntMacro(m, SOMAXCONN);
 #else
     PyModule_AddIntConstant(m, "SOMAXCONN", 5); /* Common value */
