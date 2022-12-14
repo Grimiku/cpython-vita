@@ -1135,7 +1135,6 @@ PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
     }
     PyObject *builtins = _PyEval_BuiltinsFromGlobals(tstate, globals); // borrowed ref
     if (builtins == NULL) {
-        sceClibPrintf("Still no builtins\n");
         return NULL;
     }
     PyFrameConstructor desc = {
@@ -1150,7 +1149,6 @@ PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
     };
     PyFunctionObject *func = _PyFunction_FromConstructor(&desc);
     if (func == NULL) {
-        sceClibPrintf("No functions\n");
         return NULL;
     }
     PyObject *res = _PyEval_Vector(tstate, func, locals, NULL, 0, NULL);

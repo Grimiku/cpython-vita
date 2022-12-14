@@ -1046,16 +1046,14 @@ file_rule(Parser *p)
     }
     if (p->error_indicator) {
         p->level--;
-        sceClibPrintf("P Level 1\n");
         return NULL;
     }
-    sceClibPrintf("\n\nRunning File Rule\n\n");
+
     mod_ty _res = NULL;
     int _mark = p->mark;
     { // statements? $
         if (p->error_indicator) {
             p->level--;
-            sceClibPrintf("P Level 2\n");
             return NULL;
         }
         D(fprintf(stderr, "%*c> file[%d-%d]: %s\n", p->level, ' ', _mark, p->mark, "statements? $"));
@@ -1072,10 +1070,8 @@ file_rule(Parser *p)
             if (_res == NULL && PyErr_Occurred()) {
                 p->error_indicator = 1;
                 p->level--;
-                sceClibPrintf("Some error occured making module\n");
                 return NULL;
             }
-            sceClibPrintf("Bet\n");
             goto done;
         }
         p->mark = _mark;
@@ -1293,7 +1289,6 @@ statements_rule(Parser *p)
     }
     if (p->error_indicator) {
         p->level--;
-        sceClibPrintf("P Level 3\n");
         return NULL;
     }
     asdl_stmt_seq* _res = NULL;
@@ -38817,19 +38812,14 @@ _PyPegen_parse(Parser *p)
     // Run parser
     void *result = NULL;
     if (p->start_rule == Py_file_input) {
-        sceClibPrintf("File Rule\n");
         result = file_rule(p);
     } else if (p->start_rule == Py_single_input) {
-        sceClibPrintf("Interactive Rule\n");
         result = interactive_rule(p);
     } else if (p->start_rule == Py_eval_input) {
-        sceClibPrintf("Eval Rule\n");
         result = eval_rule(p);
     } else if (p->start_rule == Py_func_type_input) {
-        sceClibPrintf("Func Type Rule\n");
         result = func_type_rule(p);
     } else if (p->start_rule == Py_fstring_input) {
-        sceClibPrintf("String rule\n");
         result = fstring_rule(p);
     }
 

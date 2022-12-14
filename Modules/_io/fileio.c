@@ -252,7 +252,7 @@ _io_FileIO___init___impl(fileio *self, PyObject *nameobj, const char *mode,
         else
             self->fd = -1;
     }
-    sceClibPrintf("Did we get past this?\n");
+    
     fd = _PyLong_AsInt(nameobj);
     if (fd < 0) {
         if (!PyErr_Occurred()) {

@@ -837,14 +837,11 @@ _PyPegen_run_parser(Parser *p)
     void *res = _PyPegen_parse(p);
     assert(p->level == 0);
     if (res == NULL) {
-        sceClibPrintf("Error with PyPegen_parse\n");
         if ((p->flags & PyPARSE_ALLOW_INCOMPLETE_INPUT) &&  _is_end_of_source(p)) {
             PyErr_Clear();
-            sceClibPrintf("incomplete input\n");
             return RAISE_SYNTAX_ERROR("incomplete input");
         }
         if (PyErr_Occurred() && !PyErr_ExceptionMatches(PyExc_SyntaxError)) {
-            sceClibPrintf("Something that wasn't a syntax error\n");
             return NULL;
         }
        // Make a second parser pass. In this pass we activate heavier and slower checks
@@ -927,13 +924,10 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
     struct tok_state *tok;
     if (flags != NULL && flags->cf_flags & PyCF_IGNORE_COOKIE) {
         tok = _PyTokenizer_FromUTF8(str, exec_input);
-        sceClibPrintf("UTF8\n");
     } else {
         tok = _PyTokenizer_FromString(str, exec_input);
-        sceClibPrintf("String\n");
     }
     if (tok == NULL) {
-        sceClibPrintf("Compile Oops\n");
         if (PyErr_Occurred()) {
             _PyPegen_raise_tokenizer_init_error(filename_ob);
         }
@@ -952,7 +946,6 @@ _PyPegen_run_parser_from_string(const char *str, int start_rule, PyObject *filen
     Parser *p = _PyPegen_Parser_New(tok, start_rule, parser_flags, feature_version,
                                     NULL, arena);
     if (p == NULL) {
-        sceClibPrintf("No parser\n");
         goto error;
     }
 

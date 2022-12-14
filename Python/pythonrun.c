@@ -482,14 +482,12 @@ PyRun_SimpleStringFlags(const char *command, PyCompilerFlags *flags)
     PyObject *m, *d, *v;
     m = PyImport_AddModule("__main__");
     if (m == NULL) {
-        sceClibPrintf("Couldn't add __main__\n");
         return -1;
     }
     d = PyModule_GetDict(m);
     v = PyRun_StringFlags(command, Py_file_input, d, d, flags);
     if (v == NULL) {
         PyErr_Print();
-        sceClibPrintf("Couldn't Run\n");
         return -1;
     }
     Py_DECREF(v);
@@ -1604,9 +1602,6 @@ PyRun_StringFlags(const char *str, int start, PyObject *globals,
     mod = _PyParser_ASTFromString(
             str, &_Py_STR(anon_string), start, flags, arena);
 
-    if (mod == NULL)
-        sceClibPrintf("Null Module from String\n");
-
     if (mod != NULL)
         ret = run_mod(mod, &_Py_STR(anon_string), globals, locals, flags, arena);
     _PyArena_Free(arena);
@@ -1713,7 +1708,6 @@ run_eval_code_obj(PyThreadState *tstate, PyCodeObject *co, PyObject *globals, Py
             PyDict_SetItemString(globals, "__builtins__",
                                  tstate->interp->builtins) < 0)
         {
-            sceClibPrintf("Couldn't set Builtins\n");
             return NULL;
         }
     }
@@ -1732,13 +1726,11 @@ run_mod(mod_ty mod, PyObject *filename, PyObject *globals, PyObject *locals,
     PyThreadState *tstate = _PyThreadState_GET();
     PyCodeObject *co = _PyAST_Compile(mod, filename, flags, -1, arena);
     if (co == NULL) {
-        sceClibPrintf("Code didn't compile\n");
         return NULL;
     }
 
     if (_PySys_Audit(tstate, "exec", "O", co) < 0) {
         Py_DECREF(co);
-        sceClibPrintf("State is bad?\n");
         return NULL;
     }
 

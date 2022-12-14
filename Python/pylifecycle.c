@@ -2226,7 +2226,6 @@ create_stdio(const PyConfig *config, PyObject* io,
     const int buffered_stdio = config->buffered_stdio;
 
     if (!is_valid_fd(fd)) {
-        sceClibPrintf("Invalid File Descriptor for stream: %d\n", fd);
         Py_RETURN_NONE;
     }
 
@@ -2475,7 +2474,6 @@ init_sys_streams(PyThreadState *tstate)
     goto done;
 
 error:
-    sceClibPrintf("can't initialize sys standard streams\n");
     res = _PyStatus_ERR("can't initialize sys standard streams");
 
 done:
