@@ -9295,7 +9295,7 @@ os_open_impl(PyObject *module, path_t *path, int flags, int mode, int dir_fd)
         return -1;
     }
 
-#ifndef MS_WINDOWS
+#if !defined(MS_WINDOWS) && !defined(__vita__)
     if (_Py_set_inheritable(fd, 0, atomic_flag_works) < 0) {
         close(fd);
         return -1;
