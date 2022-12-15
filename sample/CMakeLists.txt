@@ -40,6 +40,7 @@ target_link_libraries("${ELF}"
 
 vita_create_self(eboot.bin
   "${ELF}"
+  UNSAFE
 )
 
 # Build VPK
