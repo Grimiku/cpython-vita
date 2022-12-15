@@ -21,7 +21,7 @@ rm -rf unittest/test
 rm -rf sqlite3/test
 find . -type l -not -name \*.py -delete
 find . -type d -empty -delete
-python3.11 -OO -m compileall .
+python3.11 -OO -m compileall -j 0 -b .
 find . -type l -not -name \*.pyc -delete
 7z a -l ../python311.zip .
 cp ../python311.zip $VITASDK/arm-vita-eabi/lib
