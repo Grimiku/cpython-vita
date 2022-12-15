@@ -24,7 +24,7 @@ add_executable("${ELF}"
 target_link_libraries("${ELF}"
   python3.11
   intl
-  pthread
+  mpdec
   SceIofilemgr_stub
   SceAppMgr_stub
   SceNet_stub
@@ -33,6 +33,7 @@ target_link_libraries("${ELF}"
   SceSysmodule_stub
   SceLibKernel_stub 
   ${OPENSSL_LIBRARIES}
+  pthread
   z
   m
 )
@@ -43,13 +44,14 @@ vita_create_self(eboot.bin
 
 # Build VPK
 
-set(VPK "cpython-simple-example.vpk")
-set(TITLE_NAME "CPython Simple Example")
-set(TITLE_ID "PYTH00001")
+set(VPK "cpython-311-simple-example.vpk")
+set(TITLE_NAME "CPython 3.11 Simple Example")
+set(TITLE_ID "PYTH00003")
 set(TITLE_VER "01.00")
 
 vita_create_vpk("${VPK}" "${TITLE_ID}" eboot.bin
   NAME "${TITLE_NAME}"
   VERSION "${TITLE_VER}"
   FILE "$ENV{VITASDK}/arm-vita-eabi/lib/python311.zip" lib/python311.zip
+  FILE main.py main.py
 )
