@@ -25,4 +25,5 @@ python3.11 -OO -m compileall -j 0 -b .
 find . -type l -not -name \*.pyc -delete
 7z a -l ../python311.zip .
 cp ../python311.zip $VITASDK/arm-vita-eabi/lib
+cp ../../Modules/_decimal/libmpdec/libmpdec.a $VITASDK/arm-vita-eabi/lib
 echo "Finished Installation"
