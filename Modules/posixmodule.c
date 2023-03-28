@@ -342,6 +342,13 @@ corresponding Unix manual entries for more information on calls.");
 #    define HAVE_FSYNC      1
 #    define fsync _commit
 #  endif  /* _MSC_VER */
+#  ifdef __vita__
+#   define HAVE_OPENDIR    1
+#   undef HAVE_FSYNC
+#   undef HAVE_FDATASYNC
+#   undef HAVE_FCHDIR
+#   undef HAVE_SYMLINK
+#  endif
 #endif  /* ! __WATCOMC__ || __QNX__ */
 
 /*[clinic input]
@@ -495,6 +502,9 @@ extern char        *ctermid_r(char *);
 #ifdef MS_WINDOWS
 #  define INITFUNC PyInit_nt
 #  define MODNAME "nt"
+#elif defined (__vita__)
+#  define INITFUNC PyInit_vita
+#  define MODNAME "vita"
 #else
 #  define INITFUNC PyInit_posix
 #  define MODNAME "posix"
@@ -9289,7 +9299,7 @@ os_open_impl(PyObject *module, path_t *path, int flags, int mode, int dir_fd)
         return -1;
     }
 
-#ifndef MS_WINDOWS
+#if !defined(MS_WINDOWS) && !defined(__vita__)
     if (_Py_set_inheritable(fd, 0, atomic_flag_works) < 0) {
         close(fd);
         return -1;
@@ -14077,7 +14087,10 @@ join_path_filename(const char *path_narrow, const char* filename, Py_ssize_t fil
 
 static PyObject *
 DirEntry_from_posix_info(PyObject *module, path_t *path, const char *name,
-                         Py_ssize_t name_len, ino_t d_ino
+                         Py_ssize_t name_len
+#ifndef __vita__
+                        , ino_t d_ino
+#endif
 #ifdef HAVE_DIRENT_D_TYPE
                          , unsigned char d_type
 #endif
@@ -14130,7 +14143,9 @@ DirEntry_from_posix_info(PyObject *module, path_t *path, const char *name,
 #ifdef HAVE_DIRENT_D_TYPE
     entry->d_type = d_type;
 #endif
+#ifndef __vita__
     entry->d_ino = d_ino;
+#endif
 
     return (PyObject *)entry;
 
@@ -14283,7 +14298,10 @@ ScandirIterator_iternext(ScandirIterator *iterator)
             PyObject *module = PyType_GetModule(Py_TYPE(iterator));
             entry = DirEntry_from_posix_info(module,
                                              &iterator->path, direntp->d_name,
-                                             name_len, direntp->d_ino
+                                             name_len
+#ifndef __vita__
+                                            , direntp->d_ino
+#endif
 #ifdef HAVE_DIRENT_D_TYPE
                                              , direntp->d_type
 #endif
@@ -14873,7 +14891,9 @@ static PyMethodDef posix_methods[] = {
     OS_RMDIR_METHODDEF
     OS_SYMLINK_METHODDEF
     OS_SYSTEM_METHODDEF
+#ifdef HAVE_UMASK
     OS_UMASK_METHODDEF
+#endif
     OS_UNAME_METHODDEF
     OS_UNLINK_METHODDEF
     OS_REMOVE_METHODDEF

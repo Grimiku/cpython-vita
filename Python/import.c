@@ -1991,8 +1991,9 @@ PyImport_Import(PyObject *module_name)
     if (globals != NULL) {
         Py_INCREF(globals);
         builtins = PyObject_GetItem(globals, &_Py_ID(__builtins__));
-        if (builtins == NULL)
+        if (builtins == NULL) {
             goto err;
+        }
     }
     else {
         /* No globals -- use standard builtins, and fake globals */
@@ -2002,8 +2003,9 @@ PyImport_Import(PyObject *module_name)
             goto err;
         }
         globals = Py_BuildValue("{OO}", &_Py_ID(__builtins__), builtins);
-        if (globals == NULL)
+        if (globals == NULL) {
             goto err;
+        }
     }
 
     /* Get the __import__ function from the builtins */
@@ -2015,16 +2017,18 @@ PyImport_Import(PyObject *module_name)
     }
     else
         import = PyObject_GetAttr(builtins, &_Py_ID(__import__));
-    if (import == NULL)
+    if (import == NULL) {
         goto err;
+    }
 
     /* Call the __import__ function with the proper argument list
        Always use absolute import here.
        Calling for side-effect of import. */
     r = PyObject_CallFunction(import, "OOOOi", module_name, globals,
                               globals, from_list, 0, NULL);
-    if (r == NULL)
+    if (r == NULL) {
         goto err;
+    }
     Py_DECREF(r);
 
     r = import_get_module(tstate, module_name);

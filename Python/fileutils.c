@@ -1549,7 +1549,7 @@ _Py_open_impl(const char *pathname, int flags, int gil_held)
             return -1;
     }
 
-#ifndef MS_WINDOWS
+#if !defined(MS_WINDOWS) && !defined(__vita__)
     if (set_inheritable(fd, 0, gil_held, atomic_flag_works) < 0) {
         close(fd);
         return -1;
@@ -1721,11 +1721,12 @@ _Py_fopen_obj(PyObject *path, const char *mode)
         PyErr_SetFromErrnoWithFilenameObject(PyExc_OSError, path);
         return NULL;
     }
-
+#ifdef __vita__
     if (set_inheritable(fileno(f), 0, 1, NULL) < 0) {
         fclose(f);
         return NULL;
     }
+#endif
     return f;
 }
 

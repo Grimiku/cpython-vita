@@ -881,6 +881,8 @@ _PyConfig_InitPathConfig(PyConfig *config, int compute_path_config)
         !decode_to_dict(dict, "os_name", "nt") ||
 #elif defined(__APPLE__)
         !decode_to_dict(dict, "os_name", "darwin") ||
+#elif defined(__vita__)
+        !decode_to_dict(dict, "os_name", "vita") ||
 #else
         !decode_to_dict(dict, "os_name", "posix") ||
 #endif

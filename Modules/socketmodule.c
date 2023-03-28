@@ -205,6 +205,10 @@ shutdown(how) -- shut down traffic in one or both directions\n\
 #  include <sys/ioctl.h>
 #endif
 
+#ifdef __vita__
+#  define SOMAXCONN 5
+#endif
+
 
 #if defined(__sgi) && _COMPILER_VERSION>700 && !_SGIAPI
 /* make sure that the reentrant (gethostbyaddr_r etc)
@@ -689,6 +693,10 @@ internal_setblocking(PySocketSockObject *s, int block)
 #if (defined(HAVE_SYS_IOCTL_H) && defined(FIONBIO))
     block = !block;
     if (ioctl(s->sock_fd, FIONBIO, (unsigned int *)&block) == -1)
+        goto done;
+#elif defined(__vita__)
+	block = !block;
+	if (setsockopt(s->sock_fd, SOL_SOCKET, SO_NONBLOCK, &block, sizeof(int)) == -1)
         goto done;
 #else
     delay_flag = fcntl(s->sock_fd, F_GETFL, 0);
@@ -5383,11 +5391,12 @@ sock_initobj_impl(PySocketSockObject *self, int family, int type, int proto,
             set_error();
             return -1;
         }
-
+#ifndef __vita__
         if (_Py_set_inheritable(fd, 0, atomic_flag_works) < 0) {
             SOCKETCLOSE(fd);
             return -1;
         }
+#endif
 #endif
     }
     if (init_sockobject(self, fd, family, type, proto) == -1) {
@@ -5621,7 +5630,9 @@ gethost_common(struct hostent *h, struct sockaddr *addr, size_t alen, int af)
 
     if (h == NULL) {
         /* Let's get real error message to return */
+#ifndef __vita__
         set_herror(h_errno);
+#endif
         return NULL;
     }
 
@@ -7710,7 +7721,7 @@ PyInit__socket(void)
 #endif
 
     /* Maximum number of connections for "listen" */
-#ifdef  SOMAXCONN
+#if defined(SOMAXCONN)
     PyModule_AddIntMacro(m, SOMAXCONN);
 #else
     PyModule_AddIntConstant(m, "SOMAXCONN", 5); /* Common value */

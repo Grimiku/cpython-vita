@@ -419,6 +419,8 @@ write_obj(uint16_t *p, PyObject *obj)
     write_u64(p, val);
 #elif SIZEOF_VOID_P == 4
     write_u32(p, val);
+#elif __vita__
+    write_u32(p, val);
 #else
     #error "SIZEOF_VOID_P must be 4 or 8"
 #endif
@@ -431,6 +433,8 @@ read_obj(uint16_t *p)
 #if SIZEOF_VOID_P == 8
     val = read_u64(p);
 #elif SIZEOF_VOID_P == 4
+    val = read_u32(p);
+#elif __vita__
     val = read_u32(p);
 #else
     #error "SIZEOF_VOID_P must be 4 or 8"

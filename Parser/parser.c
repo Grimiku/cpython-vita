@@ -4,7 +4,7 @@
 #if defined(Py_DEBUG) && defined(Py_BUILD_CORE)
 #  define D(x) if (Py_DebugFlag) x;
 #else
-#  define D(x)
+#  define D(x) if (Py_DebugFlag) x;
 #endif
 
 #ifdef __wasi__
@@ -1048,6 +1048,7 @@ file_rule(Parser *p)
         p->level--;
         return NULL;
     }
+
     mod_ty _res = NULL;
     int _mark = p->mark;
     { // statements? $

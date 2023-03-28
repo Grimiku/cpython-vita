@@ -28,6 +28,17 @@
 #ifndef MS_WINDOWS
 #  include <unistd.h>
 #endif
+#ifdef __vita__
+#define HAVE_PTHREAD_H 1
+#define SIZEOF_LONG             4
+#define SIZEOF_PTHREAD_T        4
+#define SIZEOF_SIZE_T           4
+#define SIZEOF_TIME_T           4
+#define SIZEOF_VOID_P           4
+#define SIZEOF_UINTPTR_T        4
+#define SIZEOF_PTHREAD_T        4
+#define ALIGNOF_SIZE_T          4
+#endif
 #ifdef HAVE_STDDEF_H
 #  include <stddef.h>             // size_t
 #endif

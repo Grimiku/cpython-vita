@@ -14,6 +14,13 @@ extern "C" {
 #define DELIM L';'
 #endif
 
+#ifdef __vita__
+#include <psp2/io/fcntl.h>
+#define SEP L'/'
+#define MAXPATHLEN 512
+#define DELIM L';'
+#endif
+
 #ifdef __VXWORKS__
 #define DELIM L';'
 #endif

@@ -200,6 +200,19 @@ elif os_name == 'nt':
     DELIM = ';'
     SEP = '\\'
 
+elif os_name == 'vita':
+    BUILDDIR_TXT = 'pybuilddir.txt'
+    BUILD_LANDMARK = 'Modules/Setup.local'
+    DEFAULT_PROGRAM_NAME = f'python{VERSION_MAJOR}'
+    STDLIB_SUBDIR = f'{platlibdir}/python{VERSION_MAJOR}.{VERSION_MINOR}'
+    STDLIB_LANDMARKS = [f'{STDLIB_SUBDIR}/os.py', f'{STDLIB_SUBDIR}/os.pyc']
+    PLATSTDLIB_LANDMARK = f'{platlibdir}/python{VERSION_MAJOR}.{VERSION_MINOR}/lib-dynload'
+    BUILDSTDLIB_LANDMARKS = ['Lib/os.py']
+    VENV_LANDMARK = 'pyvenv.cfg'
+    ZIP_LANDMARK = f'{platlibdir}/python{VERSION_MAJOR}{VERSION_MINOR}.zip'
+    DELIM = ';'
+    SEP = '/'
+
 
 # ******************************************************************************
 # HELPER FUNCTIONS (note that we prefer C functions for performance)

@@ -292,6 +292,7 @@ static const char* _Py_stdlib_module_names[] = {
 "uu",
 "uuid",
 "venv",
+"vitapath"
 "warnings",
 "wave",
 "weakref",

@@ -144,7 +144,11 @@ getnameinfo(sa, salen, host, hostlen, serv, servlen, flags)
             return ENI_MEMORY;
         strcpy(serv, numserv);
     } else {
+#ifdef __vita__
+        sp = NULL;
+#else
         sp = getservbyport(port, (flags & NI_DGRAM) ? "udp" : "tcp");
+#endif
         if (sp) {
             if (strlen(sp->s_name) > servlen)
                 return ENI_MEMORY;

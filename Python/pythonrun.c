@@ -481,8 +481,9 @@ PyRun_SimpleStringFlags(const char *command, PyCompilerFlags *flags)
 {
     PyObject *m, *d, *v;
     m = PyImport_AddModule("__main__");
-    if (m == NULL)
+    if (m == NULL) {
         return -1;
+    }
     d = PyModule_GetDict(m);
     v = PyRun_StringFlags(command, Py_file_input, d, d, flags);
     if (v == NULL) {
@@ -1724,8 +1725,9 @@ run_mod(mod_ty mod, PyObject *filename, PyObject *globals, PyObject *locals,
 {
     PyThreadState *tstate = _PyThreadState_GET();
     PyCodeObject *co = _PyAST_Compile(mod, filename, flags, -1, arena);
-    if (co == NULL)
+    if (co == NULL) {
         return NULL;
+    }
 
     if (_PySys_Audit(tstate, "exec", "O", co) < 0) {
         Py_DECREF(co);

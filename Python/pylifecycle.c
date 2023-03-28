@@ -2193,7 +2193,7 @@ is_valid_fd(int fd)
         defined(__APPLE__) || \
         defined(__wasm__))
     return fcntl(fd, F_GETFD) >= 0;
-#elif defined(__linux__)
+#elif defined(__linux__) || defined(__vita__)
     int fd2 = dup(fd);
     if (fd2 >= 0) {
         close(fd2);
@@ -2225,8 +2225,9 @@ create_stdio(const PyConfig *config, PyObject* io,
     int buffering, isatty;
     const int buffered_stdio = config->buffered_stdio;
 
-    if (!is_valid_fd(fd))
+    if (!is_valid_fd(fd)) {
         Py_RETURN_NONE;
+    }
 
     /* stdin is always opened in buffered mode, first because it shouldn't
        make a difference in common use cases, second because TextIOWrapper

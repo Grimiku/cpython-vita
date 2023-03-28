@@ -8,6 +8,7 @@ import hashlib
 import os
 import ntpath
 import posixpath
+import vitapath
 import sys
 import argparse
 from update_file import updating_file_with_tmpfile
@@ -30,7 +31,7 @@ PCBUILD_FILTERS = os.path.join(ROOT_DIR, 'PCbuild', '_freeze_module.vcxproj.filt
 PCBUILD_PYTHONCORE = os.path.join(ROOT_DIR, 'PCbuild', 'pythoncore.vcxproj')
 
 
-OS_PATH = 'ntpath' if os.name == 'nt' else 'posixpath'
+OS_PATH = 'ntpath' if os.name == 'nt' else ('vitapath' if os.name == 'vita' else 'posixpath')
 
 # These are modules that get frozen.
 TESTS_SECTION = 'Test module'
@@ -61,6 +62,7 @@ FROZEN = [
         'genericpath',
         'ntpath',
         'posixpath',
+        'vitapath',
         # We must explicitly mark os.path as a frozen module
         # even though it will never be imported.
         f'{OS_PATH} : os.path',
@@ -92,7 +94,7 @@ BOOTSTRAP = {
 #######################################
 # platform-specific helpers
 
-if os.path is posixpath:
+if os.path is posixpath or vitapath:
     relpath_for_posix_display = os.path.relpath
 
     def relpath_for_windows_display(path, base):
