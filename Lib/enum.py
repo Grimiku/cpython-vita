@@ -199,9 +199,13 @@ class property(DynamicClassAttribute):
                         )
         else:
             if self.fget is None:
-                raise AttributeError(
-                        '%r member has no attribute %r' % (ownerclass, self.name)
-                        )
+                # look for a member by this name.
+                try:
+                    return ownerclass._member_map_[self.name]
+                except KeyError:
+                    raise AttributeError(
+                            '%r has no attribute %r' % (ownerclass, self.name)
+                            ) from None
             else:
                 return self.fget(instance)
 
@@ -250,23 +254,20 @@ class _proto_member:
             args = (args, )     # wrap it one more time
         if not enum_class._use_args_:
             enum_member = enum_class._new_member_(enum_class)
-            if not hasattr(enum_member, '_value_'):
+        else:
+            enum_member = enum_class._new_member_(enum_class, *args)
+        if not hasattr(enum_member, '_value_'):
+            if enum_class._member_type_ is object:
+                enum_member._value_ = value
+            else:
                 try:
                     enum_member._value_ = enum_class._member_type_(*args)
                 except Exception as exc:
-                    enum_member._value_ = value
-        else:
-            enum_member = enum_class._new_member_(enum_class, *args)
-            if not hasattr(enum_member, '_value_'):
-                if enum_class._member_type_ is object:
-                    enum_member._value_ = value
-                else:
-                    try:
-                        enum_member._value_ = enum_class._member_type_(*args)
-                    except Exception as exc:
-                        raise TypeError(
-                                '_value_ not set in __new__, unable to create it'
-                                ) from None
+                    new_exc = TypeError(
+                            '_value_ not set in __new__, unable to create it'
+                            )
+                    new_exc.__cause__ = exc
+                    raise new_exc
         value = enum_member._value_
         enum_member._name_ = member_name
         enum_member.__objclass__ = enum_class
@@ -301,29 +302,29 @@ class _proto_member:
                 ):
                 # no other instances found, record this member in _member_names_
                 enum_class._member_names_.append(member_name)
-        # get redirect in place before adding to _member_map_
-        # but check for other instances in parent classes first
-        need_override = False
-        descriptor = None
+        # if necessary, get redirect in place and then add it to _member_map_
+        found_descriptor = None
         for base in enum_class.__mro__[1:]:
             descriptor = base.__dict__.get(member_name)
             if descriptor is not None:
                 if isinstance(descriptor, (property, DynamicClassAttribute)):
+                    found_descriptor = descriptor
                     break
-                else:
-                    need_override = True
-                    # keep looking for an enum.property
-        if descriptor and not need_override:
-            # previous enum.property found, no further action needed
-            pass
-        elif descriptor and need_override:
+                elif (
+                        hasattr(descriptor, 'fget') and
+                        hasattr(descriptor, 'fset') and
+                        hasattr(descriptor, 'fdel')
+                    ):
+                    found_descriptor = descriptor
+                    continue
+        if found_descriptor:
             redirect = property()
+            redirect.member = enum_member
             redirect.__set_name__(enum_class, member_name)
-            # Previous enum.property found, but some other inherited attribute
-            # is in the way; copy fget, fset, fdel to this one.
-            redirect.fget = descriptor.fget
-            redirect.fset = descriptor.fset
-            redirect.fdel = descriptor.fdel
+            # earlier descriptor found; copy fget, fset, fdel to this one.
+            redirect.fget = found_descriptor.fget
+            redirect.fset = found_descriptor.fset
+            redirect.fdel = found_descriptor.fdel
             setattr(enum_class, member_name, redirect)
         else:
             setattr(enum_class, member_name, enum_member)
@@ -1302,10 +1303,10 @@ def _reduce_ex_by_global_name(self, proto):
 class FlagBoundary(StrEnum):
     """
     control how out of range values are handled
-    "strict" -> error is raised  [default for Flag]
-    "conform" -> extra bits are discarded
-    "eject" -> lose flag status [default for IntFlag]
-    "keep" -> keep flag status and all bits
+    "strict" -> error is raised
+    "conform" -> extra bits are discarded   [default for Flag]
+    "eject" -> lose flag status
+    "keep" -> keep flag status and all bits [default for IntFlag]
     """
     STRICT = auto()
     CONFORM = auto()
