@@ -314,16 +314,16 @@ def expandvars(path):
 
 def normpath(path):
     """Normalize path, eliminating double slashes, etc."""
-    # Preserve unicode (if path is unicode)
-    slash, dot = (u'/', u'.') if isinstance(path, _unicode) else ('/', '.')
-    dev, path = splitdrive(path)
+    # In Python 3, all strings are Unicode, no need to check for it
+    slash, dot = ('/', '.')
+    dev, path = os.path.splitdrive(path)
     comps = path.split('/')
     new_comps = []
     for comp in comps:
         if comp in ('', '.'):
             continue
         if (comp != '..' or (dev == '' and not new_comps) or
-             (new_comps and new_comps[-1] == '..')):
+                (new_comps and new_comps[-1] == '..')):
             new_comps.append(comp)
         elif new_comps:
             new_comps.pop()
