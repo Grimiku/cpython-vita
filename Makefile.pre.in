@@ -1916,6 +1916,7 @@ LIBSUBDIRS=	asyncio \
 		email email/mime \
 		encodings \
 		ensurepip ensurepip/_bundled \
+  		ecdsa
 		html \
 		http \
 		idlelib idlelib/Icons \
