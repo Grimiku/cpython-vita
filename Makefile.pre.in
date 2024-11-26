@@ -1917,6 +1917,7 @@ LIBSUBDIRS=	asyncio \
 		encodings \
 		ensurepip ensurepip/_bundled \
   		ecdsa \
+		future \
 		html \
 		http \
 		idlelib idlelib/Icons \
