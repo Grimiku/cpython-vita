@@ -1918,6 +1918,17 @@ LIBSUBDIRS=	asyncio \
 		ensurepip ensurepip/_bundled \
   		ecdsa \
 		future \
+		future/backports future/backports/email future/backports/html \
+		future/backports/http future/backports/test future/backports/urllib \
+		future/backports/xmlrpc \
+		future/builtins \
+		future/moves future/moves/dbm future/moves/html future/moves/http \
+		future/moves/test future/moves/tkinter future/moves/urllib \
+		future/moves/xmlrpc \
+		future/standard_library \
+		future/tests \
+		future/types \
+		future/utils \
 		html \
 		http \
 		idlelib idlelib/Icons \
